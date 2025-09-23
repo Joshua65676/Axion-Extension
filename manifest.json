@@ -1,0 +1,31 @@
+{
+  "manifest_version": 3,
+  "name": "Axion Twitter Bookmark Scraper",
+  "version": "1.0",
+  "description": "Scrapes Twitter bookmarks and sends them to Axion.",
+  "permissions": ["scripting", "activeTab"],
+  "host_permissions": ["https://X.com/*"],
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "Axion",
+    "default_icon": {
+      "16": "icon16.png",
+      "48": "icon48.png",
+      "128": "icon128.png"
+    }
+  },
+  "icons": {
+    "16": "icon16.png",
+    "48": "icon48.png",
+    "128": "icon128.png"
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://X.com/*"],
+      "js": ["content.js"]
+    }
+  ]
+}
