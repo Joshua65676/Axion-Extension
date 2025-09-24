@@ -34,5 +34,5 @@ document.getElementById("sync").addEventListener("click", async () => {
     },
   });
 
-  document.getElementById("status").innerText = "Syncing bookmarks...!!!";
+  document.getElementById("status").innerText = "Syncing bookmarks...";
 });
