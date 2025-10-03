@@ -8,3 +8,9 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
     sendResponse({ status: "triggered" });
   }
 });
+
+chrome.runtime.onMessageExternal.addListener((request, sender, sendResponse) => {
+  if (request.message === "ping") {
+    sendResponse({ installed: true });
+  }
+});
