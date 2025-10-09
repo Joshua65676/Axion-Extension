@@ -4,6 +4,9 @@
   "version": "1.0",
   "description": "Scrapes Twitter bookmarks and sends them to Axion.",
   "permissions": ["scripting", "activeTab"],
+  "externally_connectable": {
+    "matches": ["http://localhost:5173/*"]
+  },
   "host_permissions": ["https://X.com/*"],
   "action": {
     "default_popup": "popup.html",
@@ -21,9 +24,6 @@
   },
   "background": {
     "service_worker": "background.js"
-  },
-  "externally_connectable": {
-  "matches": ["*://localhost/*"]
   },
   "content_scripts": [
     {

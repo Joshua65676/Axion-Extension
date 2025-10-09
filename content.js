@@ -74,38 +74,53 @@ function categorizeTweet(text) {
 function extractAndSendBookmarks() {
   const tweets = Array.from(document.querySelectorAll("article"))
     .map((el) => {
-      const text = el.innerText;
       const anchor = el.querySelector('a[href*="/status/"]');
       const match = anchor?.href.match(/status\/(\d+)/);
       const id = match ? match[1] : null;
 
       const username = anchor?.href.split("/")[3] || "";
-      const profilePic = el.querySelector("img")?.src || "";
+      const profilePic =
+        el.querySelector('img[alt][src*="profile_images"]')?.src || "";
+
+      const tweetTextEl = el.querySelector('[data-testid="tweetText"]');
+      const text = tweetTextEl?.innerText || "";
+
+      const stickers = Array.from(
+        el.querySelectorAll('img[alt*="emoji"], img[alt*="sticker"]')
+      ).map((img) => img.src);
+      const isVerified = !!el.querySelector(
+        'svg[aria-label="Verified account"]'
+      );
+      // const isPremium = !!el.querySelector('svg[aria-label="Twitter Blue"]');
 
       const media = Array.from(el.querySelectorAll('img[src*="twimg"]')).map(
         (img) => img.src
       );
       const video = el.querySelector("video")?.src || "";
 
-      const stats = Array.from(
-        el.querySelectorAll('[data-testid$="-count"]')
-      ).map((el) => el.innerText);
-      const [comments, retweets, likes] = stats;
+      const comments =
+        el.querySelector('[data-testid="reply"]')?.innerText || "0";
+      const retweets =
+        el.querySelector('[data-testid="retweet"]')?.innerText || "0";
+      const likes = el.querySelector('[data-testid="like"]')?.innerText || "0";
 
       const views = el.querySelector('[aria-label*="Views"]')?.innerText || "";
 
       return id && text
         ? {
-            id,
-            text,
+            tweet_id: id,
+            tweet_text: text,
             username,
-            profilePic,
+            profile_pic: profilePic,
             media,
             video,
             comments,
             retweets,
             likes,
             views,
+            stickers,
+            isVerified,
+            // isPremium,
             category: categorizeTweet(text),
           }
         : null;
@@ -113,6 +128,7 @@ function extractAndSendBookmarks() {
     .filter(Boolean);
 
   console.log(" Sending bookmarks:", tweets);
+  console.log("📡 Fetching user ID...");
 
   fetch("http://localhost/axion/Axion-PHP/save_bookmarks.php", {
     method: "POST",
@@ -157,3 +173,5 @@ chrome.runtime.onMessage.addListener((msg) => {
     extractAndSendBookmarks();
   }
 });
+
+window.postMessage({ source: "axion-extension-installed" }, "*");
