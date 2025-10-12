@@ -72,76 +72,92 @@ function categorizeTweet(text) {
 }
 
 function extractAndSendBookmarks() {
-  const tweets = Array.from(document.querySelectorAll("article"))
-    .map((el) => {
-      const anchor = el.querySelector('a[href*="/status/"]');
-      const match = anchor?.href.match(/status\/(\d+)/);
-      const id = match ? match[1] : null;
+  chrome.storage.local.get("currentUser", (data) => {
+    if (chrome.runtime.lastError) {
+      console.error("Storage error:", chrome.runtime.lastError.message);
+      return;
+    }
 
-      const username = anchor?.href.split("/")[3] || "";
-      const profilePic =
-        el.querySelector('img[alt][src*="profile_images"]')?.src || "";
+    if (!data.currentUser || !data.currentUser.user_id) {
+      console.warn("No user info found in extension");
+      return;
+    }
 
-      const tweetTextEl = el.querySelector('[data-testid="tweetText"]');
-      const text = tweetTextEl?.innerText || "";
+    const user_id = data.currentUser.user_id;
+    console.log(" User ID from storage:", user_id);
 
-      const stickers = Array.from(
-        el.querySelectorAll('img[alt*="emoji"], img[alt*="sticker"]')
-      ).map((img) => img.src);
-      const isVerified = !!el.querySelector(
-        'svg[aria-label="Verified account"]'
-      );
-      // const isPremium = !!el.querySelector('svg[aria-label="Twitter Blue"]');
+    const tweets = Array.from(document.querySelectorAll("article"))
+      .map((el) => {
+        const anchor = el.querySelector('a[href*="/status/"]');
+        const match = anchor?.href.match(/status\/(\d+)/);
+        const id = match ? match[1] : null;
 
-      const media = Array.from(el.querySelectorAll('img[src*="twimg"]')).map(
-        (img) => img.src
-      );
-      const video = el.querySelector("video")?.src || "";
+        const username = anchor?.href.split("/")[3] || "";
+        const profilePic =
+          el.querySelector('img[alt][src*="profile_images"]')?.src || "";
 
-      const comments =
-        el.querySelector('[data-testid="reply"]')?.innerText || "0";
-      const retweets =
-        el.querySelector('[data-testid="retweet"]')?.innerText || "0";
-      const likes = el.querySelector('[data-testid="like"]')?.innerText || "0";
+        const tweetTextEl = el.querySelector('[data-testid="tweetText"]');
+        const text = tweetTextEl?.innerText || "";
 
-      const views = el.querySelector('[aria-label*="Views"]')?.innerText || "";
+        const stickers = Array.from(
+          el.querySelectorAll('img[alt*="emoji"], img[alt*="sticker"]')
+        ).map((img) => img.src);
 
-      return id && text
-        ? {
-            tweet_id: id,
-            tweet_text: text,
-            username,
-            profile_pic: profilePic,
-            media,
-            video,
-            comments,
-            retweets,
-            likes,
-            views,
-            stickers,
-            isVerified,
-            // isPremium,
-            category: categorizeTweet(text),
-          }
-        : null;
+        const isVerified = !!el.querySelector(
+          'svg[aria-label="Verified account"]'
+        );
+
+        const media = Array.from(el.querySelectorAll('img[src*="twimg"]')).map(
+          (img) => img.src
+        );
+
+        const video = el.querySelector("video")?.src || "";
+
+        const comments =
+          el.querySelector('[data-testid="reply"]')?.innerText || "0";
+        const retweets =
+          el.querySelector('[data-testid="retweet"]')?.innerText || "0";
+        const likes =
+          el.querySelector('[data-testid="like"]')?.innerText || "0";
+
+        const views =
+          el.querySelector('[aria-label*="Views"]')?.innerText || "";
+
+        return id && text
+          ? {
+              tweet_id: id,
+              tweet_text: text,
+              username,
+              profile_pic: profilePic,
+              media,
+              video,
+              comments,
+              retweets,
+              likes,
+              views,
+              stickers,
+              isVerified,
+              category: categorizeTweet(text),
+            }
+          : null;
+      })
+      .filter(Boolean);
+
+    console.log(" Sending bookmarks:", tweets);
+
+    fetch("http://localhost/axion/Axion-PHP/save_bookmarks.php", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ user_id, bookmarks: tweets }),
     })
-    .filter(Boolean);
-
-  console.log(" Sending bookmarks:", tweets);
-  console.log("📡 Fetching user ID...");
-
-  fetch("http://localhost/axion/Axion-PHP/save_bookmarks.php", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ user_id: "twitteruser_id", bookmarks: tweets }),
-  })
-    .then((res) => res.json())
-    .then((data) => {
-      console.log(" Response from backend:", data);
-    })
-    .catch((err) => {
-      console.error(" Fetch error:", err);
-    });
+      .then((res) => res.json())
+      .then((data) => {
+        console.log(" Response from backend:", data);
+      })
+      .catch((err) => {
+        console.error(" Fetch error:", err);
+      });
+  });
 }
 
 function autoScrollToBottom(callback) {

@@ -3,9 +3,9 @@
   "name": "Axion Twitter Bookmark Scraper",
   "version": "1.0",
   "description": "Scrapes Twitter bookmarks and sends them to Axion.",
-  "permissions": ["scripting", "activeTab"],
+  "permissions": ["storage", "scripting", "activeTab"],
   "externally_connectable": {
-    "matches": ["http://localhost:5173/*"]
+    "matches": ["http://localhost/*"]
   },
   "host_permissions": ["https://X.com/*"],
   "action": {
