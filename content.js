@@ -93,8 +93,18 @@ function extractAndSendBookmarks() {
         const id = match ? match[1] : null;
 
         const username = anchor?.href.split("/")[3] || "";
+        const anchors = Array.from(el.querySelectorAll("a"));
+        const statusAnchor = anchors.find((a) => a.href.includes("/status/"));
+        const tweetUrl = statusAnchor
+          ? `https://twitter.com${statusAnchor.getAttribute("href")}`
+          : "";
+
+        const displayName =
+          el.querySelector('div[role="button"] > div > div > span')
+            ?.innerText || "";
+        // const profilePic = el.querySelector('img[alt][src*="profile_images"]')?.src || "";
         const profilePic =
-          el.querySelector('img[alt][src*="profile_images"]')?.src || "";
+          el.querySelector('div[role="button"] img')?.src || "";
 
         const tweetTextEl = el.querySelector('[data-testid="tweetText"]');
         const text = tweetTextEl?.innerText || "";
@@ -107,11 +117,15 @@ function extractAndSendBookmarks() {
           'svg[aria-label="Verified account"]'
         );
 
-        const media = Array.from(el.querySelectorAll('img[src*="twimg"]')).map(
-          (img) => img.src
-        );
+        const media = Array.from(el.querySelectorAll('img[src*="twimg"]'))
+          .filter(
+            (img) =>
+              !img.alt ||
+              (!img.alt.includes("emoji") && !img.alt.includes("sticker"))
+          )
+          .map((img) => img.src);
 
-        const video = el.querySelector("video")?.src || "";
+        const video = el.querySelector("video source")?.src || "";
 
         const comments =
           el.querySelector('[data-testid="reply"]')?.innerText || "0";
@@ -121,13 +135,17 @@ function extractAndSendBookmarks() {
           el.querySelector('[data-testid="like"]')?.innerText || "0";
 
         const views =
-          el.querySelector('[aria-label*="Views"]')?.innerText || "";
+          Array.from(el.querySelectorAll("span")).find((span) =>
+            span.innerText.includes("Views")
+          )?.innerText || "0";
 
         return id && text
           ? {
               tweet_id: id,
               tweet_text: text,
               username,
+              display_name: displayName,
+              tweet_url: tweetUrl,
               profile_pic: profilePic,
               media,
               video,

@@ -10,10 +10,16 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
 });
 
 chrome.runtime.onMessageExternal.addListener((request, sender, sendResponse) => {
-  if (request.message === "ping") {
-    sendResponse({ installed: true });
+  if (request.type === "CHECK_CONNECTION") {
+    sendResponse({ installed: true, connected: true });
   }
 });
+
+// chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+//   if (request.type === "CHECK_CONNECTION") {
+//     sendResponse({ connected: true });
+//   }
+// });
 
 chrome.runtime.onMessageExternal.addListener((message, sender, sendResponse) => {
   if (message.ping) {
