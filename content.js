@@ -163,7 +163,7 @@ function extractAndSendBookmarks() {
 
     console.log(" Sending bookmarks:", tweets);
 
-    fetch("http://localhost/axion/Axion-PHP/save_bookmarks.php", {
+    fetch("https://joshdev.infinityfreeapp.com/save_bookmarks.php", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ user_id, bookmarks: tweets }),
