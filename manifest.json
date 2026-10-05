@@ -2,12 +2,24 @@
   "manifest_version": 3,
   "name": "Axion Twitter Bookmark Scraper",
   "version": "1.0",
-  "description": "Scrapes Twitter bookmarks and sends them to Axion.",
+  "description": "Scrapes Twitter/X bookmarks and sends them to Axion.",
   "permissions": ["storage", "scripting", "activeTab"],
   "externally_connectable": {
-    "matches": ["http://localhost/*"]
+    "matches": [
+      "http://localhost/*",
+      "http://127.0.0.1/*"
+    ]
   },
-  "host_permissions": ["https://X.com/*"],
+  "host_permissions": [
+    "https://x.com/*",
+    "https://twitter.com/*",
+    "https://www.x.com/*",
+    "https://www.twitter.com/*",
+    "http://localhost/*",
+    "http://localhost:10000/*",
+    "http://127.0.0.1/*",
+    "http://127.0.0.1:10000/*"
+  ],
   "action": {
     "default_popup": "popup.html",
     "default_title": "Axion",
@@ -27,7 +39,12 @@
   },
   "content_scripts": [
     {
-      "matches": ["https://X.com/*"],
+      "matches": [
+        "https://x.com/*",
+        "https://twitter.com/*",
+        "https://www.x.com/*",
+        "https://www.twitter.com/*"
+      ],
       "js": ["content.js"]
     }
   ]

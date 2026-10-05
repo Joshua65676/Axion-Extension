@@ -1,19 +1,19 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Axion Extension</title>
-    <!-- <style>
-      body { font-family: sans-serif; padding: 10px; }
-      button { margin-top: 10px; }
-    </style> -->
-    <link rel="stylesheet" href="popup.css">
+    <link rel="stylesheet" href="popup.css" />
   </head>
   <body>
-    <h3>Axion Extension</h3>
-    <button id="sync">Sync Bookmarks</button>
-    <div id="status"></div>
+    <div class="container">
+      <div class="brand">Axion</div>
+      <h1>Bookmarked tweets</h1>
+      <button id="sync" type="button">Click to start sync</button>
+      <div id="status">Ready</div>
+    </div>
+
     <script src="popup.js"></script>
   </body>
 </html>
