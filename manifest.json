@@ -6,8 +6,7 @@
   "permissions": ["storage", "scripting", "activeTab"],
   "externally_connectable": {
     "matches": [
-      "http://localhost/*",
-      "http://127.0.0.1/*"
+      "https://axion-api-1ylh.onrender.com/*"
     ]
   },
   "host_permissions": [
@@ -15,10 +14,7 @@
     "https://twitter.com/*",
     "https://www.x.com/*",
     "https://www.twitter.com/*",
-    "http://localhost/*",
-    "http://localhost:10000/*",
-    "http://127.0.0.1/*",
-    "http://127.0.0.1:10000/*"
+    "https://axion-api-1ylh.onrender.com/*"
   ],
   "action": {
     "default_popup": "popup.html",

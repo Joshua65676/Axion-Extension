@@ -1,4 +1,4 @@
-const API_BASE_URL = "http://localhost:10000";
+const API_BASE_URL = "https://axion-api-1ylh.onrender.com";
 
 function categorizeTweet(text) {
   const lower = (text || "").toLowerCase();
